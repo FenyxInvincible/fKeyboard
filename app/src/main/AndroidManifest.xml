@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="loc.fenyx.keyboard" >
+	<uses-sdk android:minSdkVersion="8"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.READ_USER_DICTIONARY" />
+    <uses-permission android:name="android.permission.WRITE_USER_DICTIONARY" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    
+    <application android:label="@string/app_label" android:icon="@drawable/ic_launcher">
+ <!-- Declares the input method service -->
+        <service
+            android:name="loc.fenyx.keyboard.SoftKeyboard"
+            android:label="@string/app_label"
+            android:permission="android.permission.BIND_INPUT_METHOD" >
+            <intent-filter>
+                <action android:name="android.view.InputMethod" />
+            </intent-filter>
+            <meta-data android:name="android.view.im" android:resource="@xml/method" />
+        </service>
+ <!-- Optional activities. A good idea to have some user settings. -->
+        <activity
+            android:name="loc.fenyx.keyboard.SoftKeyboard"
+            android:label="@string/app_label" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

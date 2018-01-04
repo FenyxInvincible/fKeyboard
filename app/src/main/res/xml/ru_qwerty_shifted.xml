@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/* 
+**
+** Copyright 2008, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+**
+**     http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License.
+*/
+-->
+
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="7.5%p"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    android:keyHeight="@dimen/key_height"
+    >
+
+    <Row>
+        <Key android:keyLabel="Ё" android:keyEdgeFlags="left"/>
+        <Key android:keyLabel="!"/>
+        <Key android:keyLabel="&quot;"/>
+        <Key android:keyLabel="№"/>
+        <Key android:keyLabel=";"/>
+        <Key android:keyLabel="%"/>
+        <Key android:keyLabel=":"/>
+        <Key android:keyLabel="\?"/>
+        <Key android:keyLabel="*"/>
+        <Key android:keyLabel="("/>
+        <Key android:keyLabel=")"/>
+        <Key android:keyLabel="_"/>
+        <Key android:keyLabel="+" android:keyEdgeFlags="right"/>
+    </Row>
+
+    <Row>
+        <Key android:horizontalGap="3%p" android:keyLabel="Й" android:keyEdgeFlags="left"/>
+        <Key android:keyLabel="Ц"/>
+        <Key android:keyLabel="У"/>
+        <Key android:keyLabel="К"/>
+        <Key android:keyLabel="Е"/>
+        <Key android:keyLabel="Н"/>
+        <Key android:keyLabel="Г"/>
+        <Key android:keyLabel="Ш"/>
+        <Key android:keyLabel="Щ"/>
+        <Key android:keyLabel="З"/>
+        <Key android:keyLabel="Х"/>
+        <Key android:keyLabel="Ъ"/>        
+    </Row>
+    
+    <Row>
+        <Key android:horizontalGap="6%p" android:keyLabel="Ф" android:keyEdgeFlags="left"/>
+        <Key android:keyLabel="Ы"/>
+        <Key android:keyLabel="В"/>
+        <Key android:keyLabel="А"/>
+        <Key android:keyLabel="П"/>
+        <Key android:keyLabel="Р"/>
+        <Key android:keyLabel="О"/>
+        <Key android:keyLabel="Л"/>
+        <Key android:keyLabel="Д"/>
+        <Key android:keyLabel="Ж"/>
+        <Key android:keyLabel="Э"/>
+        <Key android:keyLabel="/"/>        
+    </Row>
+    
+    <Row>
+        <Key android:codes="-1" android:keyLabel="Shift" android:keyWidth="12.5%p" android:isModifier="true"
+                android:keyEdgeFlags="left"/>
+        <Key android:keyLabel="Я"/>
+        <Key android:keyLabel="Ч"/>
+        <Key android:keyLabel="С"/>
+        <Key android:keyLabel="М"/>
+        <Key android:keyLabel="И"/>
+        <Key android:keyLabel="Т"/>
+        <Key android:keyLabel="Ь"/>
+        <Key android:keyLabel="Б"/>
+        <Key android:keyLabel="Ю"/>
+        <Key android:keyLabel=","/>
+        <Key android:keyWidth="12.5%p" android:codes="-5" android:keyLabel="Bck" android:isRepeatable="true" android:keyEdgeFlags="right"/>
+    </Row>
+    
+    <Row android:rowEdgeFlags="bottom">
+        <Key  android:codes="-4" android:keyIcon="@drawable/mic"
+                android:keyWidth="10%p" android:keyEdgeFlags="left"/>
+        
+        <Key  android:codes="-303" android:keyIcon="@drawable/ic_emoji_people_light_activated"
+                android:keyWidth="10%p"/>
+        
+        <Key android:codes="-404" android:keyIcon="@drawable/sym_keyboard_lang"
+                android:keyWidth="10%p"/>
+        
+        <Key android:keyWidth="10%p" android:codes="-21" android:keyLabel="&lt;-" android:isRepeatable="true"/>
+        <Key android:codes="32" android:keyLabel="Space" 
+                android:keyWidth="30%p" android:isRepeatable="true"/>
+        
+        <Key android:keyWidth="10%p" android:codes="-22" android:keyLabel="-&gt;" android:isRepeatable="true"/>
+        
+        <Key android:codes="10" android:keyIcon="@drawable/sym_keyboard_return"
+                android:keyWidth="20%p" android:keyEdgeFlags="right"/>
+    </Row>
+</Keyboard>
