@@ -1,16 +1,6 @@
 package loc.fenyx.keyboard;
 
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
-import loc.fenyx.keyboard.emoji.Emojicon;
-import loc.fenyx.keyboard.emojiicon.EmojiconGridView.OnEmojiconClickedListener;
-import loc.fenyx.keyboard.emojiicon.EmojiconsPopup;
-import loc.fenyx.keyboard.emojiicon.EmojiconsPopup.OnEmojiconBackspaceClickedListener;
-import loc.fenyx.keyboard.emojiicon.EmojiconsPopup.OnSoftKeyboardOpenCloseListener;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.inputmethodservice.InputMethodService;
@@ -26,8 +16,15 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.content.Intent;
-import android.speech.RecognizerIntent;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import loc.fenyx.keyboard.emoji.Emojicon;
+import loc.fenyx.keyboard.emojiicon.EmojiconGridView.OnEmojiconClickedListener;
+import loc.fenyx.keyboard.emojiicon.EmojiconsPopup;
+import loc.fenyx.keyboard.emojiicon.EmojiconsPopup.OnEmojiconBackspaceClickedListener;
+import loc.fenyx.keyboard.emojiicon.EmojiconsPopup.OnSoftKeyboardOpenCloseListener;
 
 /**
  * Example of writing an input method for a soft keyboard.  This code is
@@ -36,26 +33,26 @@ import android.speech.RecognizerIntent;
  * a basic example for how you would get started writing an input method, to
  * be fleshed out as appropriate.
  */
-public class SoftKeyboard extends InputMethodService 
+public class SoftKeyboard extends InputMethodService
         implements KeyboardView.OnKeyboardActionListener {
     static final boolean DEBUG = false;
-    
+
     /**
      * This boolean indicates the optional example code for performing
      * processing of hard keys in addition to regular text generation
      * from on-screen interaction.  It would be used for input methods that
-     * perform language translations (such as converting text entered on 
+     * perform language translations (such as converting text entered on
      * a QWERTY keyboard to Chinese), but may not be used for input methods
      * that are primarily intended to be used for on-screen text entry.
      */
     static final boolean PROCESS_HARD_KEYS = true;
 
-	private static final int REQUEST_CODE = 181083;
-    
+    private static final int REQUEST_CODE = 181083;
+
     private KeyboardView mInputView;
     private CandidateView mCandidateView;
     private CompletionInfo[] mCompletions;
-    
+
     private StringBuilder mComposing = new StringBuilder();
     private boolean mPredictionOn;
     private boolean mCompletionOn;
@@ -63,99 +60,101 @@ public class SoftKeyboard extends InputMethodService
     private long mMetaState;
 
     private int[][] xml = new int[][]{
-    		{R.xml.qwerty, R.xml.qwery_shifted},
-    		{R.xml.ru_qwerty, R.xml.ru_qwerty_shifted},    		
+            {R.xml.qwerty, R.xml.qwery_shifted},
+            {R.xml.ru_qwerty, R.xml.ru_qwerty_shifted},
     };
-    
+
     private int curLang = 0;
-    
+
     private LatinKeyboard[] mQwertyKeyboard;
     private LatinKeyboard[] mQwertyShiftedKeyboard;
-    
+
     private LatinKeyboard mCurKeyboard;
-    
+
     private String mWordSeparators;
 
-	private boolean longTouch;
+    private boolean longTouch;
 
-	private EmojiconsPopup popup;
+    private EmojiconsPopup popup;
 
-	private Context mContext;
+    private Context mContext;
 
-	private OnSoftKeyboardOpenCloseListener emojiCloseListener;
-    
+    private OnSoftKeyboardOpenCloseListener emojiCloseListener;
+
     /**
      * Main initialization of the input method component.  Be sure to call
      * to super class.
      */
-    @Override public void onCreate() {
-    	//android.os.Debug.waitForDebugger();  
+    @Override
+    public void onCreate() {
+        //android.os.Debug.waitForDebugger();
         super.onCreate();
         mQwertyKeyboard = new LatinKeyboard[xml.length];
         mQwertyShiftedKeyboard = new LatinKeyboard[xml.length];
         mWordSeparators = getResources().getString(R.string.word_separators);
-        
-        
+
+
     }
-    
+
     private void initEmoji(Context context) {
-		mContext = context;
-		Resources r = context.getResources();
-		popup = new EmojiconsPopup(mInputView, context);
+        mContext = context;
+        Resources r = context.getResources();
+        popup = new EmojiconsPopup(mInputView, context);
 
-		// Will automatically set size according to the soft keyboard size
-		popup.setSizeForSoftKeyboard();
+        // Will automatically set size according to the soft keyboard size
+        popup.setSizeForSoftKeyboard();
 
-		// Set on emojicon click listener
-		popup.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
+        // Set on emojicon click listener
+        popup.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
 
-			public void onEmojiconClicked(Emojicon emojicon) {
-				getCurrentInputConnection().commitText(emojicon.getEmoji(), 0);// append(emojicon.getEmoji());
-			}
-		});
+            public void onEmojiconClicked(Emojicon emojicon) {
+                getCurrentInputConnection().commitText(emojicon.getEmoji(), 0);// append(emojicon.getEmoji());
+            }
+        });
 
-		// Set on backspace click listener
+        // Set on backspace click listener
 
-		popup.setOnEmojiconBackspaceClickedListener(new OnEmojiconBackspaceClickedListener() {
+        popup.setOnEmojiconBackspaceClickedListener(new OnEmojiconBackspaceClickedListener() {
 
-			public void onEmojiconBackspaceClicked(View v) {
-				if (emojiCloseListener != null) {
-					SoftKeyboard.this.onKey(LatinKeyboardView.KEYCODE_EMOJI, null);
-				} else {
-					KeyEvent event = new KeyEvent(0, 0, 0,
-							KeyEvent.KEYCODE_DEL, 0, 0, 0, 0,
-							KeyEvent.KEYCODE_ENDCALL);
-					if (popup.isShowing()) {
-						popup.dismiss();
-					}
-				}
+            public void onEmojiconBackspaceClicked(View v) {
+                if (emojiCloseListener != null) {
+                    SoftKeyboard.this.onKey(LatinKeyboardView.KEYCODE_EMOJI, null);
+                } else {
+                    KeyEvent event = new KeyEvent(0, 0, 0,
+                            KeyEvent.KEYCODE_DEL, 0, 0, 0, 0,
+                            KeyEvent.KEYCODE_ENDCALL);
+                    if (popup.isShowing()) {
+                        popup.dismiss();
+                    }
+                }
 
-			}
-		});
+            }
+        });
 
-		// Set listener for keyboard open/close
-		emojiCloseListener = new OnSoftKeyboardOpenCloseListener() {
+        // Set listener for keyboard open/close
+        emojiCloseListener = new OnSoftKeyboardOpenCloseListener() {
 
-			public void onKeyboardOpen(int keyBoardHeight) {
-				if (!popup.isShowing()) {
-					popup.showAtBottom();
-				}
-			}
+            public void onKeyboardOpen(int keyBoardHeight) {
+                if (!popup.isShowing()) {
+                    popup.showAtBottom();
+                }
+            }
 
-			public void onKeyboardClose() {
-				popup.dismiss();
-			}
-		};
+            public void onKeyboardClose() {
+                popup.dismiss();
+            }
+        };
 
-		popup.setOnSoftKeyboardOpenCloseListener(emojiCloseListener);
+        popup.setOnSoftKeyboardOpenCloseListener(emojiCloseListener);
 
-	}
-    
+    }
+
     /**
      * This is the point where you can do all of your UI initialization.  It
      * is called after creation and any configuration change.
      */
-    @Override public void onInitializeInterface() {
+    @Override
+    public void onInitializeInterface() {
         if (mQwertyKeyboard != null) {
             // Configuration changes can happen after the keyboard gets recreated,
             // so we need to be able to re-build the keyboards if the available
@@ -164,19 +163,20 @@ public class SoftKeyboard extends InputMethodService
             if (displayWidth == mLastDisplayWidth) return;
             mLastDisplayWidth = displayWidth;
         }
-        for(int i = 0; i < xml.length; i++){
-	        mQwertyKeyboard[i] = new LatinKeyboard(this, xml[i][0]);
-	        mQwertyShiftedKeyboard[i] = new LatinKeyboard(this, xml[i][1]);
+        for (int i = 0; i < xml.length; i++) {
+            mQwertyKeyboard[i] = new LatinKeyboard(this, xml[i][0]);
+            mQwertyShiftedKeyboard[i] = new LatinKeyboard(this, xml[i][1]);
         }
     }
-    
+
     /**
      * Called by the framework when your view for creating input needs to
      * be generated.  This will be called the first time your input method
      * is displayed, and every time it needs to be re-created such as due to
      * a configuration change.
      */
-    @Override public View onCreateInputView() {
+    @Override
+    public View onCreateInputView() {
         mInputView = (KeyboardView) getLayoutInflater().inflate(
                 R.layout.input, null);
         mInputView.setOnKeyboardActionListener(this);
@@ -189,7 +189,8 @@ public class SoftKeyboard extends InputMethodService
      * Called by the framework when your view for showing candidates needs to
      * be generated, like {@link #onCreateInputView}.
      */
-    @Override public View onCreateCandidatesView() {
+    @Override
+    public View onCreateCandidatesView() {
         mCandidateView = new CandidateView(this);
         mCandidateView.setService(this);
         return mCandidateView;
@@ -201,27 +202,28 @@ public class SoftKeyboard extends InputMethodService
      * bound to the client, and are now receiving all of the detailed information
      * about the target of our edits.
      */
-    @Override public void onStartInput(EditorInfo attribute, boolean restarting) {
+    @Override
+    public void onStartInput(EditorInfo attribute, boolean restarting) {
         super.onStartInput(attribute, restarting);
-        
+
         // Reset our state.  We want to do this even if restarting, because
         // the underlying state of the text editor could have changed in any way.
         mComposing.setLength(0);
         updateCandidates();
-        
+
         if (!restarting) {
             // Clear shift states.
             mMetaState = 0;
         }
-        
+
         mPredictionOn = false;
         mCompletionOn = false;
         mCompletions = null;
-        
+
         mCurKeyboard = mQwertyKeyboard[curLang];
         updateShiftKeyState(attribute);
-    
-        
+
+
         // Update the label on the enter key, depending on what the application
         // says it will do.
         mCurKeyboard.setImeOptions(getResources(), attribute.imeOptions);
@@ -231,46 +233,44 @@ public class SoftKeyboard extends InputMethodService
      * This is called when the user is done editing a field.  We can use
      * this to reset our state.
      */
-    @Override public void onFinishInput() {
+    @Override
+    public void onFinishInput() {
         super.onFinishInput();
-        
+
         // Clear current composing text and candidates.
         mComposing.setLength(0);
         updateCandidates();
-        
+
         // We only hide the candidates window when finishing input on
         // a particular editor, to avoid popping the underlying application
         // up and down if the user is entering text into the bottom of
         // its window.
         setCandidatesViewShown(false);
-        
+
         mCurKeyboard = mQwertyKeyboard[curLang];
         if (mInputView != null) {
             mInputView.closing();
         }
     }
-    
-    @Override public void onStartInputView(EditorInfo attribute, boolean restarting) {
+
+    @Override
+    public void onStartInputView(EditorInfo attribute, boolean restarting) {
         super.onStartInputView(attribute, restarting);
         // Apply the selected keyboard to the input view.
         mInputView.setKeyboard(mCurKeyboard);
         mInputView.closing();
-        try {
-			replaceSomeAbr();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
     }
-    
+
     /**
      * Deal with the editor reporting movement of its cursor.
      */
-    @Override public void onUpdateSelection(int oldSelStart, int oldSelEnd,
-            int newSelStart, int newSelEnd,
-            int candidatesStart, int candidatesEnd) {
+    @Override
+    public void onUpdateSelection(int oldSelStart, int oldSelEnd,
+                                  int newSelStart, int newSelEnd,
+                                  int candidatesStart, int candidatesEnd) {
         super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd,
                 candidatesStart, candidatesEnd);
-        
+
         // If the current selection in the text view changes, we should
         // clear whatever candidate text we have.
         if (mComposing.length() > 0 && (newSelStart != candidatesEnd
@@ -290,23 +290,24 @@ public class SoftKeyboard extends InputMethodService
      * to show the completions ourself, since the editor can not be seen
      * in that situation.
      */
-    @Override public void onDisplayCompletions(CompletionInfo[] completions) {
+    @Override
+    public void onDisplayCompletions(CompletionInfo[] completions) {
         if (mCompletionOn) {
             mCompletions = completions;
             if (completions == null) {
                 setSuggestions(null, false, false);
                 return;
             }
-            
+
             List<String> stringList = new ArrayList<String>();
-            for (int i=0; i<(completions != null ? completions.length : 0); i++) {
+            for (int i = 0; i < (completions != null ? completions.length : 0); i++) {
                 CompletionInfo ci = completions[i];
                 if (ci != null) stringList.add(ci.getText().toString());
             }
             setSuggestions(stringList, true, true);
         }
     }
-    
+
     /**
      * This translates incoming hard key events in to edit operations on an
      * InputConnection.  It is only needed when using the
@@ -321,35 +322,36 @@ public class SoftKeyboard extends InputMethodService
         if (c == 0 || ic == null) {
             return false;
         }
-        
+
         boolean dead = false;
 
         if ((c & KeyCharacterMap.COMBINING_ACCENT) != 0) {
             dead = true;
             c = c & KeyCharacterMap.COMBINING_ACCENT_MASK;
         }
-        
+
         if (mComposing.length() > 0) {
-            char accent = mComposing.charAt(mComposing.length() -1 );
+            char accent = mComposing.charAt(mComposing.length() - 1);
             int composed = KeyEvent.getDeadChar(accent, c);
 
             if (composed != 0) {
                 c = composed;
-                mComposing.setLength(mComposing.length()-1);
+                mComposing.setLength(mComposing.length() - 1);
             }
         }
-        
+
         onKey(c, null);
-        
+
         return true;
     }
-    
+
     /**
      * Use this to monitor key events being delivered to the application.
      * We get first crack at them, and can either resume them or let them
      * continue to the app.
      */
-    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 // The InputMethodService already takes care of the back
@@ -362,7 +364,7 @@ public class SoftKeyboard extends InputMethodService
                     }
                 }
                 break;
-                
+
             case KeyEvent.KEYCODE_DEL:
                 // Special handling of the delete key: if we currently are
                 // composing text for the user, we want to modify that instead
@@ -372,11 +374,11 @@ public class SoftKeyboard extends InputMethodService
                     return true;
                 }
                 break;
-                
+
             case KeyEvent.KEYCODE_ENTER:
                 // Let the underlying text editor always handle these.
                 return false;
-                
+
             default:
                 // For all other keys, if we want to do transformations on
                 // text being entered with a hard keyboard, we need to process
@@ -407,7 +409,7 @@ public class SoftKeyboard extends InputMethodService
                     }
                 }*/
         }
-        
+
         return super.onKeyDown(keyCode, event);
     }
 
@@ -416,7 +418,8 @@ public class SoftKeyboard extends InputMethodService
      * We get first crack at them, and can either resume them or let them
      * continue to the app.
      */
-    @Override public boolean onKeyUp(int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
         // If we want to do transformations on text being entered with a hard
         // keyboard, we need to process the up events to update the meta key
         // state we are tracking.
@@ -426,7 +429,7 @@ public class SoftKeyboard extends InputMethodService
                         keyCode, event);
             }
         }
-        
+
         return super.onKeyUp(keyCode, event);
     }
 
@@ -456,7 +459,7 @@ public class SoftKeyboard extends InputMethodService
             mInputView.setShifted(mCapsLock || caps != 0);
         }*/
     }
-    
+
     /**
      * Helper to determine if a given character code is alphabetic.
      */
@@ -467,23 +470,22 @@ public class SoftKeyboard extends InputMethodService
             return false;
         }
     }
-    
+
     /**
      * Helper to send a key down / key up pair to the current editor.
      */
     private void keyDownUp(int keyEventCode) {
-    	if(getCurrentInputConnection() != null){
-    		
-	        getCurrentInputConnection().sendKeyEvent(
-	                new KeyEvent(KeyEvent.ACTION_DOWN, keyEventCode));
-	        getCurrentInputConnection().sendKeyEvent(
-	                new KeyEvent(KeyEvent.ACTION_UP, keyEventCode));
-    	}
-    	else{
-    		handleClose();
-    	}
+        if (getCurrentInputConnection() != null) {
+
+            getCurrentInputConnection().sendKeyEvent(
+                    new KeyEvent(KeyEvent.ACTION_DOWN, keyEventCode));
+            getCurrentInputConnection().sendKeyEvent(
+                    new KeyEvent(KeyEvent.ACTION_UP, keyEventCode));
+        } else {
+            handleClose();
+        }
     }
-    
+
     /**
      * Helper to send a character to the editor as raw key events.
      */
@@ -504,8 +506,8 @@ public class SoftKeyboard extends InputMethodService
     // Implementation of KeyboardViewListener
 
     public void onKey(int primaryCode, int[] keyCodes) {
-        
-    	if (isWordSeparator(primaryCode)) {
+
+        if (isWordSeparator(primaryCode)) {
             // Handle separator
             if (mComposing.length() > 0) {
                 commitTyped(getCurrentInputConnection());
@@ -517,73 +519,63 @@ public class SoftKeyboard extends InputMethodService
         } else if (primaryCode == Keyboard.KEYCODE_SHIFT) {
             handleShift();
         } else if (primaryCode == LatinKeyboardView.KEYCODE_EMOJI) {
-            if(!popup.isShowing()){
-            	popup.showAtBottom();//handleClose();
-            }
-            else{
-            	popup.dismiss();
+            if (!popup.isShowing()) {
+                popup.showAtBottom();//handleClose();
+            } else {
+                popup.dismiss();
             }
             return;
         } else if (primaryCode == LatinKeyboardView.KEYCODE_OPTIONS) {
             // Show a menu or somethin'
-        } 
-        else if(primaryCode == LatinKeyboardView.KEYCODE_LANG){
-        	swipeLeft();
-        }
-        else if(primaryCode == LatinKeyboardView.VOICE_INPUT){
-        	callVoiceInput();
-        }
-        else if(primaryCode == -1 * KeyEvent.KEYCODE_DPAD_LEFT){
-        	keyDownUp(KeyEvent.KEYCODE_DPAD_LEFT);
-        }
-        else if(primaryCode == -1 * KeyEvent.KEYCODE_DPAD_RIGHT){
+        } else if (primaryCode == LatinKeyboardView.KEYCODE_LANG) {
+            swipeLeft();
+        } else if (primaryCode == LatinKeyboardView.VOICE_INPUT) {
+            callVoiceInput();
+        } else if (primaryCode == -1 * KeyEvent.KEYCODE_DPAD_LEFT) {
+            keyDownUp(KeyEvent.KEYCODE_DPAD_LEFT);
+        } else if (primaryCode == -1 * KeyEvent.KEYCODE_DPAD_RIGHT) {
 
-        	final CharSequence after = getCurrentInputConnection().getTextAfterCursor(1, 0);
-        	
-        	if(after.length() != 0){
-        		keyDownUp(KeyEvent.KEYCODE_DPAD_RIGHT);
-        	}
-        }
-        else if(primaryCode == -1 * KeyEvent.KEYCODE_DPAD_UP){
-        	keyDownUp(KeyEvent.KEYCODE_DPAD_UP);
-        }
-        else if(primaryCode == -1 * KeyEvent.KEYCODE_DPAD_DOWN){
-        	keyDownUp(KeyEvent.KEYCODE_DPAD_DOWN);
-        }
-        else {
+            final CharSequence after = getCurrentInputConnection().getTextAfterCursor(1, 0);
+
+            if (after.length() != 0) {
+                keyDownUp(KeyEvent.KEYCODE_DPAD_RIGHT);
+            }
+        } else if (primaryCode == -1 * KeyEvent.KEYCODE_DPAD_UP) {
+            keyDownUp(KeyEvent.KEYCODE_DPAD_UP);
+        } else if (primaryCode == -1 * KeyEvent.KEYCODE_DPAD_DOWN) {
+            keyDownUp(KeyEvent.KEYCODE_DPAD_DOWN);
+        } else {
             handleCharacter(primaryCode, keyCodes);
         }
     }
 
     private void callVoiceInput() {
 
-    	InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		if (mgr != null) {
-			List<InputMethodInfo> inputMethodInfos = mgr.getInputMethodList();
-			String pinyinId = null;
-			
-			for (InputMethodInfo inputMethodInfo : inputMethodInfos) {
-				
-	            if (inputMethodInfo.getServiceName().contains("VoiceInputMethodService")) {
-	                    pinyinId = inputMethodInfo.getId();
-	            }
-	            else if (inputMethodInfo.getPackageName().contains("googlequicksearchbox")) {
-	            	pinyinId = inputMethodInfo.getId();
-	            }
-			}
-			
-			if(pinyinId != null){
-				switchInputMethod(pinyinId);
-			}
-			else{
-				mgr.showInputMethodPicker();
-			}
-			
-		    
-		}
-	}
+        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (mgr != null) {
+            List<InputMethodInfo> inputMethodInfos = mgr.getInputMethodList();
+            String pinyinId = null;
 
-	public void onText(CharSequence text) {
+            for (InputMethodInfo inputMethodInfo : inputMethodInfos) {
+
+                if (inputMethodInfo.getServiceName().contains("VoiceInputMethodService")) {
+                    pinyinId = inputMethodInfo.getId();
+                } else if (inputMethodInfo.getPackageName().contains("googlequicksearchbox")) {
+                    pinyinId = inputMethodInfo.getId();
+                }
+            }
+
+            if (pinyinId != null) {
+                switchInputMethod(pinyinId);
+            } else {
+                mgr.showInputMethodPicker();
+            }
+
+
+        }
+    }
+
+    public void onText(CharSequence text) {
         InputConnection ic = getCurrentInputConnection();
         if (ic == null) return;
         ic.beginBatchEdit();
@@ -611,9 +603,9 @@ public class SoftKeyboard extends InputMethodService
             }
         }
     }
-    
+
     public void setSuggestions(List<String> suggestions, boolean completions,
-            boolean typedWordValid) {
+                               boolean typedWordValid) {
         if (suggestions != null && suggestions.size() > 0) {
             setCandidatesViewShown(true);
         } else if (isExtractViewShown()) {
@@ -623,7 +615,7 @@ public class SoftKeyboard extends InputMethodService
             mCandidateView.setSuggestions(suggestions, completions, typedWordValid);
         }
     }
-    
+
     private void handleBackspace() {
         final int length = mComposing.length();
         if (length > 1) {
@@ -639,61 +631,27 @@ public class SoftKeyboard extends InputMethodService
         }
         updateShiftKeyState(getCurrentInputEditorInfo());
     }
-    
-    private void replaceSomeAbr() throws UnsupportedEncodingException {
-
-        final int length = mComposing.length();
-        
-        final String[] from = {
-            "”лы", "улы", "јвы", "авы"
-        };
-
-        final String[] to = {
-        		new String(new byte[]{(byte)0xf0, (byte)0x9f, (byte)0x98, (byte)0x84}, "US-ASCII"), new String(new byte[]{(byte)0xf0, (byte)0x9f, (byte)0x98, (byte)0x84}, "US-ASCII"), ")", ")"
-        };
-        
-        if (length >= 3) {
-        	
-        	for (int i = 0; i < to.length; i++) {
-				
-				int index;
-				
-				while((index = mComposing.indexOf(" " + from[i])) != -1){
-					mComposing.replace(index, index + from[i].length(), to[i]);
-				}
-				
-				while((index = mComposing.indexOf(from[i] + " ")) != -1){
-					mComposing.replace(index, index + from[i].length(), to[i]);
-				}
-			}
-        	
-            getCurrentInputConnection().setComposingText(mComposing, 1);
-            updateCandidates();
-        }
-        updateShiftKeyState(getCurrentInputEditorInfo());
-    }
 
     private void handleShift() {
         if (mInputView == null) {
             return;
         }
-        
+
         Keyboard currentKeyboard = mInputView.getKeyboard();
         if (mQwertyKeyboard[curLang] == currentKeyboard) {
             // Alphabet keyboard
-           
-            if(!mInputView.isShifted()){
-            	mInputView.setKeyboard(mQwertyShiftedKeyboard[curLang]);
+
+            if (!mInputView.isShifted()) {
+                mInputView.setKeyboard(mQwertyShiftedKeyboard[curLang]);
             }
-        } 
-        else if(mQwertyShiftedKeyboard[curLang] == currentKeyboard){
-        	
-            if(!mInputView.isShifted()){
-            	mInputView.setKeyboard(mQwertyKeyboard[curLang]);
+        } else if (mQwertyShiftedKeyboard[curLang] == currentKeyboard) {
+
+            if (!mInputView.isShifted()) {
+                mInputView.setKeyboard(mQwertyKeyboard[curLang]);
             }
         }
     }
-    
+
     private void handleCharacter(int primaryCode, int[] keyCodes) {
         if (isInputViewShown()) {
             if (mInputView.isShifted()) {
@@ -718,20 +676,20 @@ public class SoftKeyboard extends InputMethodService
         requestHideSelf(0);
         mInputView.closing();
     }
-    
+
     private String getWordSeparators() {
         return mWordSeparators;
     }
-    
+
     public boolean isWordSeparator(int code) {
         String separators = getWordSeparators();
-        return separators.contains(String.valueOf((char)code));
+        return separators.contains(String.valueOf((char) code));
     }
 
     public void pickDefaultCandidate() {
         pickSuggestionManually(0);
     }
-    
+
     public void pickSuggestionManually(int index) {
         if (mCompletionOn && mCompletions != null && index >= 0
                 && index < mCompletions.length) {
@@ -750,61 +708,61 @@ public class SoftKeyboard extends InputMethodService
     }
     
     /*@Override
-	public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig) {
 
 		android.os.Debug.waitForDebugger();
 
 		super.onConfigurationChanged(newConfig);
 
 	}*/
-    
+
     public void swipeRight() {
-    	
-    	curLang = (curLang + 1 <= xml.length)?curLang + 1:0;
+
+        curLang = (curLang + 1 <= xml.length) ? curLang + 1 : 0;
         changeKeyboardLanguage(curLang);
     }
-    
-    public void swipeLeft() {        
-    	curLang = (curLang - 1 >= 0)?curLang - 1:xml.length - 1;
-    	changeKeyboardLanguage(curLang);
+
+    public void swipeLeft() {
+        curLang = (curLang - 1 >= 0) ? curLang - 1 : xml.length - 1;
+        changeKeyboardLanguage(curLang);
     }
 
     public void swipeDown() {
-    	curLang = (curLang - 1 >= 0)?curLang - 1:xml.length - 1;
-    	changeKeyboardLanguage(curLang);
+        curLang = (curLang - 1 >= 0) ? curLang - 1 : xml.length - 1;
+        changeKeyboardLanguage(curLang);
     }
 
     public void swipeUp() {
-    	curLang = (curLang + 1 <= xml.length)?curLang + 1:0;
+        curLang = (curLang + 1 <= xml.length) ? curLang + 1 : 0;
         changeKeyboardLanguage(curLang);
     }
-    
+
     public void onPress(int primaryCode) {
     }
-    
+
     public void onRelease(int primaryCode) {
-    	if(longTouch){
-    		handleShift();
-    	}
-    	longTouch = false;
+        if (longTouch) {
+            handleShift();
+        }
+        longTouch = false;
     }
-    
+
     public void longTouch(Key key) {
-    	if(!longTouch){
-	    	longTouch = true;
-	    	handleShift();
-    	}
-	}
-    private void changeKeyboardLanguage(int langId){
-    	if(langId >= 0 && langId < xml.length){
-	    	if(mInputView.isShifted()){
-	        	mInputView.setKeyboard(mQwertyShiftedKeyboard[langId]);
-	        	mInputView.setShifted(true);
-	        }
-	    	else{
-	    		mInputView.setKeyboard(mQwertyKeyboard[langId]);
-	    	}
-    	}
+        if (!longTouch) {
+            longTouch = true;
+            handleShift();
+        }
+    }
+
+    private void changeKeyboardLanguage(int langId) {
+        if (langId >= 0 && langId < xml.length) {
+            if (mInputView.isShifted()) {
+                mInputView.setKeyboard(mQwertyShiftedKeyboard[langId]);
+                mInputView.setShifted(true);
+            } else {
+                mInputView.setKeyboard(mQwertyKeyboard[langId]);
+            }
+        }
     }
 }
 
