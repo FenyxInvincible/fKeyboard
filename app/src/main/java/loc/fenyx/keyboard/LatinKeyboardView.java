@@ -58,9 +58,9 @@ public class LatinKeyboardView extends KeyboardView {
     @Override
     public boolean onTouchEvent(MotionEvent me) {
 
-        if (lastTouchEvent != null) {
+        /*if (lastTouchEvent != null) {
             lastTouchEvent.recycle();
-        }
+        }*/
 
         if (me.getAction() == MotionEvent.ACTION_DOWN) {
 

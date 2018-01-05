@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/fKeyboard.iml" filepath="$PROJECT_DIR$/fKeyboard.iml" />
+      <module fileurl="file://E:\work\Java\my\fKeyboard\fKeyboard.iml" filepath="E:\work\Java\my\fKeyboard\fKeyboard.iml" />
     </modules>
   </component>
 </project>
