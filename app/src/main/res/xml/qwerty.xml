@@ -8,19 +8,19 @@
     >
 
     <Row android:keyWidth="7.65%p">
-        <Key android:keyLabel="`" android:keyEdgeFlags="left"/>
-        <Key android:keyLabel="1"/>
-        <Key android:keyLabel="2"/>
-        <Key android:keyLabel="3"/>
-        <Key android:keyLabel="4"/>
-        <Key android:keyLabel="5"/>
-        <Key android:keyLabel="6"/>
-        <Key android:keyLabel="7"/>
-        <Key android:keyLabel="8"/>
-        <Key android:keyLabel="9"/>
-        <Key android:keyLabel="0"/>
-        <Key android:keyLabel="-"/>
-        <Key android:keyLabel="=" android:keyEdgeFlags="right"/>
+        <Key android:keyLabel="`" android:keyOutputText="~" android:keyEdgeFlags="left"/>
+        <Key android:keyLabel="1" android:keyOutputText="!"/>
+        <Key android:keyLabel="2" android:keyOutputText="\@"/>
+        <Key android:keyLabel="3" android:keyOutputText="\#"/>
+        <Key android:keyLabel="4" android:keyOutputText="$"/>
+        <Key android:keyLabel="5" android:keyOutputText="%"/>
+        <Key android:keyLabel="6" android:keyOutputText="^"/>
+        <Key android:keyLabel="7" android:keyOutputText="&amp;"/>
+        <Key android:keyLabel="8" android:keyOutputText="*"/>
+        <Key android:keyLabel="9" android:keyOutputText="("/>
+        <Key android:keyLabel="0" android:keyOutputText=")"/>
+        <Key android:keyLabel="-" android:keyOutputText="_"/>
+        <Key android:keyLabel="=" android:keyOutputText="+" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row>
@@ -34,8 +34,8 @@
         <Key android:keyLabel="i"/>
         <Key android:keyLabel="o"/>
         <Key android:keyLabel="p"/>
-        <Key android:keyLabel="["/>
-        <Key android:keyLabel="]"/>
+        <Key android:keyLabel="[" android:keyOutputText="{"/>
+        <Key android:keyLabel="]" android:keyOutputText="}"/>
     </Row>
 
     <Row>
@@ -48,9 +48,9 @@
         <Key android:keyLabel="j"/>
         <Key android:keyLabel="k"/>
         <Key android:keyLabel="l"/>
-        <Key android:keyLabel=";"/>
-        <Key android:keyLabel="'"/>
-        <Key android:keyLabel="\\"/>
+        <Key android:keyLabel=";" android:keyOutputText=":" android:codes="59" />
+        <Key android:keyLabel="'" android:keyOutputText="&quot;" android:codes="39" />
+        <Key android:keyLabel="\\" android:keyOutputText="|" android:codes="92" />
     </Row>
     
     <Row>
@@ -61,9 +61,9 @@
         <Key android:keyLabel="b"/>
         <Key android:keyLabel="n"/>
         <Key android:keyLabel="m"/>
-        <Key android:keyLabel=","/>
-        <Key android:keyLabel="."/>
-        <Key android:keyLabel="/"/>
+        <Key android:keyLabel="," android:keyOutputText="&lt;"/>
+        <Key android:keyLabel="." android:keyOutputText="&gt;"/>
+        <Key android:keyLabel="/" android:keyOutputText="\?"/>
         <Key android:keyWidth="16.6%p" android:codes="-5" android:keyIcon="@drawable/sym_keyboard_delete" android:isRepeatable="true" android:keyEdgeFlags="right"/>
     </Row>
     

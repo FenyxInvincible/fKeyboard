@@ -8,7 +8,7 @@
     >
 
     <Row android:keyWidth="7.65%p">
-        <Key android:keyLabel="Ё" android:keyEdgeFlags="left"/>
+        <Key android:keyOutputText="'" android:keyLabel="₴" android:keyEdgeFlags="left"/>
         <Key android:keyOutputText="1" android:keyLabel="!"/>
         <Key android:keyOutputText="2" android:keyLabel="&quot;"/>
         <Key android:keyOutputText="3" android:keyLabel="№"/>
@@ -35,12 +35,12 @@
         <Key android:keyLabel="Щ"/>
         <Key android:keyLabel="З"/>
         <Key android:keyLabel="Х"/>
-        <Key android:keyLabel="Ъ"/>        
+        <Key android:keyLabel="Ї"/>
     </Row>
     
     <Row>
         <Key android:keyLabel="Ф"/>
-        <Key android:keyLabel="Ы"/>
+        <Key android:keyLabel="І"/>
         <Key android:keyLabel="В"/>
         <Key android:keyLabel="А"/>
         <Key android:keyLabel="П"/>
@@ -49,8 +49,8 @@
         <Key android:keyLabel="Л"/>
         <Key android:keyLabel="Д"/>
         <Key android:keyLabel="Ж"/>
-        <Key android:keyLabel="Э"/>
-        <Key android:keyLabel="/" android:keyOutputText="\\"/>
+        <Key android:keyLabel="Є"/>
+        <Key android:keyLabel="Ґ"/>
     </Row>
     
     <Row>

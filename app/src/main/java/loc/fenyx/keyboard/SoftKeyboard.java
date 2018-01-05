@@ -62,6 +62,7 @@ public class SoftKeyboard extends InputMethodService
     private int[][] xml = new int[][]{
             {R.xml.qwerty, R.xml.qwery_shifted},
             {R.xml.ru_qwerty, R.xml.ru_qwerty_shifted},
+            {R.xml.ua_qwerty, R.xml.ua_qwerty_shifted},
     };
 
     private int curLang = 0;

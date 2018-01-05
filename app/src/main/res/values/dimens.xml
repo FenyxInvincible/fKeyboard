@@ -21,6 +21,9 @@
 <resources>
     <dimen name="key_height">40dip</dimen>
     <dimen name="key_width">40dip</dimen>
-    <dimen name="candidate_font_height">16sp</dimen>
+    <dimen name="candidate_font_height">14sp</dimen>
+    <dimen name="candidate_hint_height">11sp</dimen>
     <dimen name="candidate_vertical_padding">6sp</dimen>
+    <dimen name="hint_vertical_padding">4sp</dimen>
+    <dimen name="hint_horizontal_padding">8sp</dimen>
 </resources>

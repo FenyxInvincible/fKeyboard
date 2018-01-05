@@ -23,6 +23,7 @@ public class LatinKeyboard extends Keyboard {
     protected Key createKeyFromXml(Resources res, Row parent, int x, int y,
                                    XmlResourceParser parser) {
         Key key = new LatinKey(res, parent, x, y, parser);
+
         if (key.codes[0] == 10) {
             mEnterKey = key;
         }
@@ -70,8 +71,15 @@ public class LatinKeyboard extends Keyboard {
 
     static class LatinKey extends Keyboard.Key {
 
+        public String hint;
+
         public LatinKey(Resources res, Keyboard.Row parent, int x, int y, XmlResourceParser parser) {
             super(res, parent, x, y, parser);
+
+            if (this.text != null) {
+                this.hint = String.valueOf(this.text);
+                this.text = null;
+            }
         }
 
         /**
