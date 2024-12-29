@@ -1,30 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="loc.fenyx.keyboard" >
-	<uses-sdk android:minSdkVersion="8"/>
+    package="loc.fenyx.keyboard"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="34"/>
+
+    <!-- Permission declarations remain unchanged -->
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.READ_USER_DICTIONARY" />
     <uses-permission android:name="android.permission.WRITE_USER_DICTIONARY" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    
-    <application android:label="@string/app_label" android:icon="@drawable/ic_launcher">
- <!-- Declares the input method service -->
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="FenyxKeyboard"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.FullKeyboard"
+        tools:targetApi="34">
+
         <service
-            android:name="loc.fenyx.keyboard.SoftKeyboard"
-            android:label="@string/app_label"
-            android:permission="android.permission.BIND_INPUT_METHOD" >
+            android:name=".SoftKeyboard"
+            android:label="FenyxKeyboard"
+            android:permission="android.permission.BIND_INPUT_METHOD"
+            android:exported="true"> <!-- Exported attribute is mandatory for explicit intents targeting Android 12 and above -->
             <intent-filter>
                 <action android:name="android.view.InputMethod" />
             </intent-filter>
-            <meta-data android:name="android.view.im" android:resource="@xml/method" />
+            <meta-data
+                android:name="android.view.im"
+                android:resource="@xml/method" />
         </service>
- <!-- Optional activities. A good idea to have some user settings. -->
+
         <activity
-            android:name="loc.fenyx.keyboard.SoftKeyboard"
-            android:label="@string/app_label" >
+            android:name=".SetupActivity"
+            android:exported="true">  <!-- This line explicitly marks the activity as exported -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>

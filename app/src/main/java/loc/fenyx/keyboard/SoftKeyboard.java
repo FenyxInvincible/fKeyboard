@@ -21,10 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import loc.fenyx.keyboard.emoji.Emojicon;
-import loc.fenyx.keyboard.emojiicon.EmojiconGridView.OnEmojiconClickedListener;
-import loc.fenyx.keyboard.emojiicon.EmojiconsPopup;
-import loc.fenyx.keyboard.emojiicon.EmojiconsPopup.OnEmojiconBackspaceClickedListener;
-import loc.fenyx.keyboard.emojiicon.EmojiconsPopup.OnSoftKeyboardOpenCloseListener;
 
 /**
  * Example of writing an input method for a soft keyboard.  This code is
@@ -76,11 +72,7 @@ public class SoftKeyboard extends InputMethodService
 
     private boolean longTouch;
 
-    private EmojiconsPopup popup;
-
     private Context mContext;
-
-    private OnSoftKeyboardOpenCloseListener emojiCloseListener;
 
     /**
      * Main initialization of the input method component.  Be sure to call
@@ -100,53 +92,6 @@ public class SoftKeyboard extends InputMethodService
     private void initEmoji(Context context) {
         mContext = context;
         Resources r = context.getResources();
-        popup = new EmojiconsPopup(mInputView, context);
-
-        // Will automatically set size according to the soft keyboard size
-        popup.setSizeForSoftKeyboard();
-
-        // Set on emojicon click listener
-        popup.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
-
-            public void onEmojiconClicked(Emojicon emojicon) {
-                getCurrentInputConnection().commitText(emojicon.getEmoji(), 0);// append(emojicon.getEmoji());
-            }
-        });
-
-        // Set on backspace click listener
-
-        popup.setOnEmojiconBackspaceClickedListener(new OnEmojiconBackspaceClickedListener() {
-
-            public void onEmojiconBackspaceClicked(View v) {
-                if (emojiCloseListener != null) {
-                    SoftKeyboard.this.onKey(LatinKeyboardView.KEYCODE_EMOJI, null);
-                } else {
-                    KeyEvent event = new KeyEvent(0, 0, 0,
-                            KeyEvent.KEYCODE_DEL, 0, 0, 0, 0,
-                            KeyEvent.KEYCODE_ENDCALL);
-                    if (popup.isShowing()) {
-                        popup.dismiss();
-                    }
-                }
-
-            }
-        });
-
-        // Set listener for keyboard open/close
-        emojiCloseListener = new OnSoftKeyboardOpenCloseListener() {
-
-            public void onKeyboardOpen(int keyBoardHeight) {
-                if (!popup.isShowing()) {
-                    popup.showAtBottom();
-                }
-            }
-
-            public void onKeyboardClose() {
-                popup.dismiss();
-            }
-        };
-
-        popup.setOnSoftKeyboardOpenCloseListener(emojiCloseListener);
 
     }
 
@@ -519,13 +464,6 @@ public class SoftKeyboard extends InputMethodService
             handleBackspace();
         } else if (primaryCode == Keyboard.KEYCODE_SHIFT) {
             handleShift();
-        } else if (primaryCode == LatinKeyboardView.KEYCODE_EMOJI) {
-            if (!popup.isShowing()) {
-                popup.showAtBottom();//handleClose();
-            } else {
-                popup.dismiss();
-            }
-            return;
         } else if (primaryCode == LatinKeyboardView.KEYCODE_OPTIONS) {
             // Show a menu or somethin'
         } else if (primaryCode == LatinKeyboardView.KEYCODE_LANG) {
